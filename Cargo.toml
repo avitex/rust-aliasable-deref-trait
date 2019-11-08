@@ -1,0 +1,17 @@
+[package]
+name = "aliasable-owner"
+version = "0.1.0"
+authors = ["avitex <theavitex@gmail.com>"]
+edition = "2018"
+description = "Marker trait for a pointer type that is allowed to have its pointee aliased"
+documentation = "https://docs.rs/aliasable-owner"
+homepage = "https://github.com/avitex/rust-aliasable-owner"
+repository = "https://github.com/avitex/rust-aliasable-owner"
+license = "MIT"
+
+[dependencies]
+
+[features]
+default = ["std"]
+std = []
+alloc = []
