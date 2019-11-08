@@ -3,10 +3,11 @@ name = "aliasable_deref_trait"
 version = "0.1.0"
 authors = ["avitex <theavitex@gmail.com>"]
 edition = "2018"
-description = "Marker trait for a pointer type that is allowed to have its pointee aliased"
+description = "Marker trait indicating a pointer type can have it's pointee safely aliased"
 documentation = "https://docs.rs/aliasable-deref-trait"
 homepage = "https://github.com/avitex/rust-aliasable-deref-trait"
 repository = "https://github.com/avitex/rust-aliasable-deref-trait"
+categories = ["memory-management", "no-std"]
 license = "MIT"
 
 [dependencies]

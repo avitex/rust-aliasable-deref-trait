@@ -1,5 +1,5 @@
-//! This module defines a marker trait implemented for pointer types that
-//! are allowed to have their pointee aliased.
+//! This module defines a marker trait implemented for pointer types that 
+//! indicate their pointee's can be safely aliased.
 #![no_std]
 #![deny(missing_debug_implementations, missing_docs)]
 
