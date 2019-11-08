@@ -7,7 +7,7 @@
 mod core {
     extern crate std;
 
-    pub use std::{ops::Deref, ptr::NonNull, rc::Rc, sync::Arc, boxed::Box};
+    pub use std::{ops::Deref, ptr::NonNull, rc::Rc, sync::Arc};
 }
 
 #[cfg(all(not(feature = "std"), not(test)))]
@@ -19,7 +19,7 @@ mod core {
     pub use core::ops::{ops::Deref, ptr::NonNull};
 
     #[cfg(feature = "alloc")]
-    pub use alloc::{rc::Rc, sync::Arc, boxed::Box};
+    pub use alloc::{rc::Rc, sync::Arc};
 }
 
 use self::core::*;
@@ -34,6 +34,26 @@ unsafe impl<T: ?Sized> AliasableOwner for Rc<T> {}
 #[cfg(any(feature = "alloc", feature = "std"))]
 unsafe impl<T: ?Sized> AliasableOwner for Arc<T> {}
 
+/// Helper trait for converting non-aliasable types
+/// into their aliasable counterparts.
+pub trait IntoAliasableOwner {
+    /// The aliasable type to convert to.
+    type Target: AliasableOwner;
+
+    /// Convert into an aliasable pointer type.
+    fn into_aliasable_owner(self) -> Self::Target;
+}
+
+impl<T> IntoAliasableOwner for T
+where
+    T: AliasableOwner
+{
+    type Target = T;
+
+    fn into_aliasable_owner(self) -> Self::Target {
+        self
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -50,4 +70,10 @@ mod tests {
         let ptr = &Arc::new(()) as &dyn AliasableOwner<Target = ()>;
         assert_eq!(ptr.deref(), &());
     }
+
+    #[test]
+    fn test_into_aliasable_owner() {
+        let aliasable_ptr = Arc::new(()).into_aliasable_owner();
+        assert_eq!(aliasable_ptr.deref(), &());
+    } 
 }
