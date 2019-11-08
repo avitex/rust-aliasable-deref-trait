@@ -1,12 +1,12 @@
 [package]
-name = "aliasable-owner"
+name = "aliasable_deref_trait"
 version = "0.1.0"
 authors = ["avitex <theavitex@gmail.com>"]
 edition = "2018"
 description = "Marker trait for a pointer type that is allowed to have its pointee aliased"
-documentation = "https://docs.rs/aliasable-owner"
-homepage = "https://github.com/avitex/rust-aliasable-owner"
-repository = "https://github.com/avitex/rust-aliasable-owner"
+documentation = "https://docs.rs/aliasable-deref-trait"
+homepage = "https://github.com/avitex/rust-aliasable-deref-trait"
+repository = "https://github.com/avitex/rust-aliasable-deref-trait"
 license = "MIT"
 
 [dependencies]
