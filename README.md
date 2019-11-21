@@ -8,5 +8,5 @@
 Documentation hosted on [docs.rs](https://docs.rs/aliasable_deref_trait).
 
 ```elixir
-aliasable_deref_trait = "0.2.0"
+aliasable_deref_trait = "0.2.1"
 ```

@@ -1,6 +1,6 @@
 [package]
 name = "aliasable_deref_trait"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["avitex <theavitex@gmail.com>"]
 edition = "2018"
 description = "Marker trait indicating a pointer type can have it's pointee safely aliased"
