@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/avitex/rust-aliasable-deref-trait.svg)](https://travis-ci.org/avitex/rust-aliasable-deref-trait)
+[![Build Status](https://travis-ci.com/avitex/rust-aliasable-deref-trait.svg?branch=master)](https://travis-ci.com/avitex/rust-aliasable-deref-trait)
 [![Feast crate](https://img.shields.io/crates/v/aliasable_deref_trait.svg)](https://crates.io/crates/aliasable_deref_trait)
 [![Docs](https://docs.rs/aliasable_deref_trait/badge.svg)](https://docs.rs/aliasable_deref_trait)
 
