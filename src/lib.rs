@@ -19,7 +19,7 @@ use core::ops::Deref;
 /// An unsafe marker trait for types that deref to an address that is aliasable
 /// when coerced to a raw pointer.
 ///
-/// This means types of which their deref is backed by a `core::ptr::UniquePtr`
+/// This means types that have their deref backed by a `core::ptr::UniquePtr`
 /// are not-applicable due to `noalias`.
 pub unsafe trait AliasableDeref: Deref {}
 
