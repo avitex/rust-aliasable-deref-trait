@@ -1,89 +1,59 @@
-//! This module defines a marker trait implemented for pointer types that
-//! indicate their pointee's can be safely aliased.
-#![no_std]
-#![deny(missing_debug_implementations, missing_docs)]
+//! This crate defines an unsafe marker trait for types that deref to an address that is aliasable
+//! when coerced to a raw pointer.
+
+#![deny(
+    warnings,
+    missing_debug_implementations,
+    rustdoc::all,
+    clippy::all,
+    clippy::cargo,
+    clippy::nursery,
+    clippy::pedantic
+)]
+#![cfg_attr(not(feature = "std"), no_std)]
+
+#[cfg(feature = "alloc")]
+extern crate alloc;
 
 use core::ops::Deref;
 
-/// Marker trait for a pointer type that is allowed to have its
-/// pointee aliased (except when dropped).
+/// An unsafe marker trait for types that deref to an address that is aliasable
+/// when coerced to a raw pointer.
+///
+/// This means types of which their deref is backed by a `core::ptr::UniquePtr`
+/// are not-applicable due to `noalias`.
 pub unsafe trait AliasableDeref: Deref {}
-
-/// Helper trait for converting non-aliasable types
-/// into their aliasable counterparts.
-pub trait IntoAliasable {
-    /// The aliasable type to convert to.
-    type Target: AliasableDeref;
-
-    /// Convert into an aliasable pointer type.
-    fn into_aliasable(self) -> Self::Target;
-}
-
-impl<T> IntoAliasable for T
-where
-    T: AliasableDeref,
-{
-    type Target = T;
-
-    fn into_aliasable(self) -> Self::Target {
-        self
-    }
-}
 
 unsafe impl<'a, T: ?Sized> AliasableDeref for core::cell::Ref<'a, T> {}
 
 unsafe impl<'a, T: ?Sized> AliasableDeref for core::cell::RefMut<'a, T> {}
 
-#[cfg(any(feature = "std", feature = "alloc", test))]
-unsafe impl<T: ?Sized> AliasableDeref for self::std::rc::Rc<T> {}
+#[cfg(feature = "alloc")]
+unsafe impl<T: ?Sized> AliasableDeref for alloc::rc::Rc<T> {}
 
-#[cfg(any(feature = "std", feature = "alloc", test))]
-unsafe impl<T: ?Sized> AliasableDeref for self::std::sync::Arc<T> {}
+#[cfg(feature = "alloc")]
+unsafe impl<T: ?Sized> AliasableDeref for alloc::sync::Arc<T> {}
 
-#[cfg(any(feature = "std", test))]
-unsafe impl<'a, T: ?Sized> AliasableDeref for self::std::sync::MutexGuard<'a, T> {}
+#[cfg(feature = "std")]
+unsafe impl<'a, T: ?Sized> AliasableDeref for std::sync::MutexGuard<'a, T> {}
 
-#[cfg(any(feature = "std", test))]
-unsafe impl<'a, T: ?Sized> AliasableDeref for self::std::sync::RwLockReadGuard<'a, T> {}
+#[cfg(feature = "std")]
+unsafe impl<'a, T: ?Sized> AliasableDeref for std::sync::RwLockReadGuard<'a, T> {}
 
-#[cfg(any(feature = "std", test))]
-unsafe impl<'a, T: ?Sized> AliasableDeref for self::std::sync::RwLockWriteGuard<'a, T> {}
-
-#[cfg(any(feature = "std", test))]
-mod std {
-    extern crate std;
-    pub use std::{rc, sync};
-}
-
-#[cfg(all(feature = "alloc", not(feature = "std"), not(test)))]
-mod std {
-    extern crate alloc;
-    pub use alloc::{rc, sync};
-}
+#[cfg(feature = "std")]
+unsafe impl<'a, T: ?Sized> AliasableDeref for std::sync::RwLockWriteGuard<'a, T> {}
 
 #[cfg(test)]
 mod tests {
-    use core::{cell::RefCell, ops::Deref};
+    use core::cell::RefCell;
 
-    use super::{
-        std::{
-            rc::Rc,
-            sync::{Arc, Mutex, RwLock},
-        },
-        AliasableDeref, IntoAliasable,
-    };
+    #[cfg(feature = "alloc")]
+    use alloc::{rc::Rc, sync::Arc};
 
-    #[test]
-    fn test_rc() {
-        let ptr = &Rc::new(()) as &dyn AliasableDeref<Target = ()>;
-        assert_eq!(ptr.deref(), &());
-    }
+    #[cfg(feature = "std")]
+    use std::sync::{Mutex, RwLock};
 
-    #[test]
-    fn test_arc() {
-        let ptr = &Arc::new(()) as &dyn AliasableDeref<Target = ()>;
-        assert_eq!(ptr.deref(), &());
-    }
+    use super::AliasableDeref;
 
     #[test]
     fn test_cell_ref() {
@@ -100,12 +70,28 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "alloc")]
+    fn test_rc() {
+        let ptr = &Rc::new(()) as &dyn AliasableDeref<Target = ()>;
+        assert_eq!(ptr.deref(), &());
+    }
+
+    #[test]
+    #[cfg(feature = "alloc")]
+    fn test_arc() {
+        let ptr = &Arc::new(()) as &dyn AliasableDeref<Target = ()>;
+        assert_eq!(ptr.deref(), &());
+    }
+
+    #[cfg(feature = "std")]
+    #[test]
     fn test_mutex_guard() {
         let mutex = Mutex::new(());
         let ptr = &mutex.lock().unwrap() as &dyn AliasableDeref<Target = ()>;
         assert_eq!(ptr.deref(), &());
     }
 
+    #[cfg(feature = "std")]
     #[test]
     fn test_rw_lock_read_guard() {
         let rw_lock = RwLock::new(());
@@ -113,16 +99,11 @@ mod tests {
         assert_eq!(ptr.deref(), &());
     }
 
+    #[cfg(feature = "std")]
     #[test]
     fn test_rw_lock_write_guard() {
         let rw_lock = RwLock::new(());
         let ptr = &rw_lock.write().unwrap() as &dyn AliasableDeref<Target = ()>;
         assert_eq!(ptr.deref(), &());
-    }
-
-    #[test]
-    fn test_into_aliasable_owner() {
-        let aliasable_ptr = Arc::new(()).into_aliasable();
-        assert_eq!(aliasable_ptr.deref(), &());
     }
 }

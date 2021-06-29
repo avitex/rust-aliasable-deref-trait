@@ -1,18 +1,23 @@
 [package]
 name = "aliasable_deref_trait"
 version = "0.2.1"
-authors = ["avitex <theavitex@gmail.com>"]
+authors = ["avitex <avitex@wfxlabs.com>"]
 edition = "2018"
-description = "Marker trait indicating a pointer type can have it's pointee safely aliased"
+description = "Marker trait for types that deref to an address that is aliasable when coerced to a raw pointer"
+keywords = ["aliasable", "deref", "trait"]
+categories = ["memory-management", "no-std"]
 documentation = "https://docs.rs/aliasable_deref_trait"
 homepage = "https://github.com/avitex/rust-aliasable-deref-trait"
 repository = "https://github.com/avitex/rust-aliasable-deref-trait"
-categories = ["memory-management", "no-std"]
 license = "MIT"
-
-[dependencies]
+readme = "README.md"
+include = ["src/**/*", "README.md", "CHANGELOG.md", "LICENSE", "Cargo.toml"]
 
 [features]
 default = ["std"]
-std = []
+std = ["alloc"]
 alloc = []
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
