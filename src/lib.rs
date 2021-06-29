@@ -9,6 +9,7 @@
     clippy::nursery,
     clippy::pedantic
 )]
+#![allow(rustdoc::missing_doc_code_examples)]
 #![cfg_attr(not(feature = "std"), no_std)]
 
 #[cfg(feature = "alloc")]
