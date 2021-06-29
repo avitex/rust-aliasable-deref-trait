@@ -3,7 +3,6 @@
 
 #![deny(
     warnings,
-    missing_debug_implementations,
     rustdoc::all,
     clippy::all,
     clippy::cargo,
